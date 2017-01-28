@@ -8,7 +8,7 @@ contract MyContract {
   // BlockOne ID bindings
 
   // The address below is for the ropsten network only
-  EntitlementRegistry entitlementRegistry = EntitlementRegistry(0x6216e07ba072ca4451f35bdfa2326f46d3f99dbe);
+  EntitlementRegistry entitlementRegistry = EntitlementRegistry(0x995bef79dfa2e666de2c6e5f751b4483b6d05cd8);
 
   function getEntitlement() constant returns(address) {
       return entitlementRegistry.getOrThrow("eu.rk.test");
