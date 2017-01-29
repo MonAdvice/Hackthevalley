@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <meta charset="utf-8"> <!-- needed for ether symbol to display correctly -->
+        <script src="js/web3.min.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <script src="js/blockone-walletbar-bundle.js"></script>
+    </head>
+    <body>
+      <div class="container">
+        <h1 class="title">MonAdvice</h1>
+        <p>January 29, 2017</p>
+<h2>
+<input class='input-text' type='text' placeholder='Your untold story...Vote for the truth'>
+</h2>
+
+        <button onclick="vote('0')">+1</button>
+        <button onclick="vote('1')">-1</button>
+      </div>
+
+        <script>
+            // PUT YOUR CONTRACT'S ABI HERE
+            var abi =[{"constant":true,"inputs":[],"name":"mesg","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getEntitlement","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_mesg","type":"string"}],"name":"test","outputs":[],"payable":false,"type":"function"},{"payable":false,"type":"fallback"}];
+            // PUT YOUR UNIQUE DAPP ID HERE
+            var dappId = "eu.rk.test";
+
+            // PUT YOUR CONTRACT ADDRESS HERE
+            var contractAddress = "0xfae79fccfe2ec7b41e99cf1130595f1bb5e5dfd3";
+
+            var walletBar = new WalletBar({
+                dappNamespace: dappId,
+                blockchain: "norsborg",
+                callbacks: { signOut: function () { location.reload(); } },
+                priorityRpcs: ["http://localhost:8545"]
+            });
+
+            var web3 = new Web3();
+            var myContract;
+            walletBar.applyHook(web3)
+            .then(function() {
+                loadEns();
+                document.getElementById("app").style.display="";
+                myContract = web3.eth.contract(abi).at(contractAddress);
+
+                setInterval( function () {
+
+
+                                  }, 1000);
+                              })
+                              .catch(function(err) {
+                                  console.log(err);
+                              });
+
+              function vote(arg) {
+                    var account = walletBar.getCurrentAccount(); // get account selected in wallet bar
+                                  console.log(account);
+                                  if (!account) return alert("You must log in to transact");
+                                  walletBar.createSecureSigner();
+                                  myContract.test.estimateGas(arg, { from: account }, function (err1, gas) {
+                                      if(err1) return alert("Error: "+err1);
+                                      myContract.test.sendTransaction(arg, { gas: gas, from: account }, function (err2, hash) {
+                                          if(err2) return alert("Error: "+err2);
+                                          document.getElementById("status").innerText = "Last vote Tx ID: "+hash;
+                                      });
+                                  });
+              }
+              function loadEns(){
+                var scriptTag = document.createElement('script');
+                scriptTag.type= 'text/javascript';
+                scriptTag.src= 'js/ensutils.js';
+                document.head.appendChild(scriptTag);
+              }
+
+
+
+        </script>
+
+    </body>
+</html>
